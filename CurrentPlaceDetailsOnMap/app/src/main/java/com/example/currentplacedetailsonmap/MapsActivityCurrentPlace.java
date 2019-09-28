@@ -17,6 +17,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Chronometer;
+import android.os.SystemClock;
+import android.widget.Toast;
+
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -36,13 +40,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  * An activity that displays a map showing the place at the device's current location.
  */
-public class  MapsActivityCurrentPlace extends AppCompatActivity
+public class MapsActivityCurrentPlace extends AppCompatActivity
         implements OnMapReadyCallback {
 
     public TimerTask timer1;
@@ -90,19 +95,6 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
-        mStartButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                timerFlag = true;
-            }
-        });
-
-        mStopButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                timerFlag = false;
-            }
-        });
-*/
 
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
@@ -115,18 +107,19 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
         mStartButton = (Button) findViewById(R.id.start_button);
         mStopButton = (Button) findViewById(R.id.stop_button);
 
-        mStartButton.setOnClickListener(new View.OnClickListener(){
+        mStartButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 timerFlag = true;
                 mMap.clear();
             }
         });
 
-        mStopButton.setOnClickListener(new View.OnClickListener(){
+        mStopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 timerFlag = false;
             }
         });
+
 
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -147,8 +140,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
 
             @Override
             public void run() {
-                while(timerFlag)
-                {
+                while (timerFlag) {
                     getDeviceLocation();
                     break;
                 }
@@ -157,8 +149,8 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
             }
         };
 
-        t=new Timer();
-        t.scheduleAtFixedRate(timer1, 0 , 10000);
+        t = new Timer();
+        t.scheduleAtFixedRate(timer1, 0, 10000);
 
     }
 
@@ -176,6 +168,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
 
     /**
      * Sets up the options menu.
+     *
      * @param menu The options menu.
      * @return Boolean.
      */
@@ -187,6 +180,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
 
     /**
      * Handles a click on the menu option to get a place.
+     *
      * @param item The menu item to handle.
      * @return Boolean.
      */
@@ -262,7 +256,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
                             mLastKnownLocation = task.getResult();
 
                             LatLng newLoc = new LatLng(mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude());
+                                    mLastKnownLocation.getLongitude());
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLoc, DEFAULT_ZOOM));
 
                             mMap.addMarker(new MarkerOptions().position(newLoc).title("New Location"));
@@ -274,7 +268,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
                             //mMap.moveCamera(CameraUpdateFactory
-                                 //   .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                            //   .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
 
@@ -282,7 +276,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
                     }
                 });
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
@@ -340,8 +334,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
         if (mLocationPermissionGranted) {
             // Get the likely places - that is, the businesses and other points of interest that
             // are the best match for the device's current location.
-            @SuppressWarnings("MissingPermission") final
-            Task<PlaceLikelihoodBufferResponse> placeResult =
+            @SuppressWarnings("MissingPermission") final Task<PlaceLikelihoodBufferResponse> placeResult =
                     mPlaceDetectionClient.getCurrentPlace(null);
             placeResult.addOnCompleteListener
                     (new OnCompleteListener<PlaceLikelihoodBufferResponse>() {
@@ -430,7 +423,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
 
                 // Position the map's camera at the location of the marker.
                 //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
-                    //    DEFAULT_ZOOM));
+                //    DEFAULT_ZOOM));
             }
         };
 
@@ -458,7 +451,7 @@ public class  MapsActivityCurrentPlace extends AppCompatActivity
                 mLastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }

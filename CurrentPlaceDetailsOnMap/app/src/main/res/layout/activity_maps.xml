@@ -12,30 +12,16 @@
         android:layout_height="match_parent"
         tools:context="com.example.currentplacedetailsonmap.MapsActivityCurrentPlace" />
 
+
     <Button
+        android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start"
-        android:id="@+id/start_button"
         android:textSize="20sp"
         android:background="#359c5e"
         android:textColor="#ffffff"
         android:layout_gravity="top|start"/>
-    <!-- android:id="@+id/stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="330dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="#9C3535"
-        android:layout_gravity="top"
-        android:padding="8dp"
-        android:text="Stop"
-        android:textColor="#ffffff" /> -->
-
 
     <Button
         android:layout_width="wrap_content"
@@ -46,21 +32,17 @@
         android:textColor="#ffffff"
         android:background="#9C3535"
         android:layout_gravity="top|end"/>
-    <!--<Button
-        android:id="@+id/start_button"
+
+    <Chronometer
+        android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="42dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="288dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="#359c5e"
-        android:layout_gravity="top"
-        android:padding="8dp"
-        android:text="Start"
-        android:textColor="#ffffff" />
-    -->
+        android:textSize="30sp"
+        android:textColor="#ffffff"
+        android:layout_gravity="top|center"/>
+
+
+
+
 
 </FrameLayout>

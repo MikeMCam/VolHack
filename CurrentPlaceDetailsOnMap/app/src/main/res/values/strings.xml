@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Current Place Details</string>
+    <string name="app_name">Shortcut</string>
     <string name="title_activity_maps"></string>
     <string name="default_info_title"></string>
     <string name="default_info_snippet"></string>
