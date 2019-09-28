@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -23,10 +25,10 @@ import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -34,11 +36,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * An activity that displays a map showing the place at the device's current location.
  */
-public class MapsActivityCurrentPlace extends AppCompatActivity
+public class  MapsActivityCurrentPlace extends AppCompatActivity
         implements OnMapReadyCallback {
+
+    public TimerTask timer1;
+    Timer t;
 
     private static final String TAG = MapsActivityCurrentPlace.class.getSimpleName();
     private GoogleMap mMap;
@@ -61,6 +69,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private Location mLastKnownLocation;
+    private Button mStartButton;
+    private Button mStopButton;
 
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -73,9 +83,26 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private String[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
 
+    // Used as timer flag
+    private boolean timerFlag = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*
+        mStartButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                timerFlag = true;
+            }
+        });
+
+        mStopButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                timerFlag = false;
+            }
+        });
+*/
 
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
@@ -85,6 +112,21 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_maps);
+        mStartButton = (Button) findViewById(R.id.start_button);
+        mStopButton = (Button) findViewById(R.id.stop_button);
+
+        mStartButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                timerFlag = true;
+                mMap.clear();
+            }
+        });
+
+        mStopButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                timerFlag = false;
+            }
+        });
 
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -99,6 +141,24 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        TimerTask timer1 = new TimerTask() {
+
+            @Override
+            public void run() {
+                while(timerFlag)
+                {
+                    getDeviceLocation();
+                    break;
+                }
+
+
+            }
+        };
+
+        t=new Timer();
+        t.scheduleAtFixedRate(timer1, 0 , 10000);
 
     }
 
@@ -190,6 +250,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
          */
+
         try {
             if (mLocationPermissionGranted) {
                 Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
@@ -199,16 +260,25 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+
+                            LatLng newLoc = new LatLng(mLastKnownLocation.getLatitude(),
+                            mLastKnownLocation.getLongitude());
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLoc, DEFAULT_ZOOM));
+
+                            mMap.addMarker(new MarkerOptions().position(newLoc).title("New Location"));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(newLoc));
+
+                            Log.w("Test", String.valueOf(mLastKnownLocation.getLongitude()) + "  " + String.valueOf(mLastKnownLocation.getLatitude()));
+
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                            //mMap.moveCamera(CameraUpdateFactory
+                                 //   .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
+
+
                     }
                 });
             }
@@ -359,8 +429,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                         .snippet(markerSnippet));
 
                 // Position the map's camera at the location of the marker.
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
-                        DEFAULT_ZOOM));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
+                    //    DEFAULT_ZOOM));
             }
         };
 
