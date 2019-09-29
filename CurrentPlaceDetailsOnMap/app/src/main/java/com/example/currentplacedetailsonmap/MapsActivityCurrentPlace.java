@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.MenuInflater;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -47,7 +48,7 @@ import java.util.TimerTask;
 /**
  * An activity that displays a map showing the place at the device's current location.
  */
-public class MapsActivityCurrentPlace extends AppCompatActivity
+public class  MapsActivityCurrentPlace extends AppCompatActivity
         implements OnMapReadyCallback {
 
     public TimerTask timer1;
@@ -91,9 +92,43 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     // Used as timer flag
     private boolean timerFlag = false;
 
+
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item1:
+                Toast.makeText(this, "Item 1 selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.item2:
+                Toast.makeText(this, "Item 2 selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.item3:
+                Toast.makeText(this, "Item 3 selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.subitem1:
+                Toast.makeText(this, "Sub Item 1 selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.subitem2:
+                Toast.makeText(this, "Sub Item 2 selected", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_dropdown, menu);
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
 
         // Retrieve location and camera position from saved instance state.
@@ -107,16 +142,22 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         mStartButton = (Button) findViewById(R.id.start_button);
         mStopButton = (Button) findViewById(R.id.stop_button);
 
-        mStartButton.setOnClickListener(new View.OnClickListener() {
+        mStopButton.setVisibility(View.GONE);
+
+        mStartButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 timerFlag = true;
+                mStartButton.setVisibility(View.GONE);
+                mStopButton.setVisibility(View.VISIBLE);
                 mMap.clear();
             }
         });
 
-        mStopButton.setOnClickListener(new View.OnClickListener() {
+        mStopButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 timerFlag = false;
+                mStopButton.setVisibility(View.GONE);
+                mStartButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -140,7 +181,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
             @Override
             public void run() {
-                while (timerFlag) {
+                while(timerFlag)
+                {
                     getDeviceLocation();
                     break;
                 }
@@ -149,8 +191,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             }
         };
 
-        t = new Timer();
-        t.scheduleAtFixedRate(timer1, 0, 10000);
+        t=new Timer();
+        t.scheduleAtFixedRate(timer1, 0 , 10000);
 
     }
 
@@ -168,7 +210,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     /**
      * Sets up the options menu.
-     *
      * @param menu The options menu.
      * @return Boolean.
      */
@@ -180,7 +221,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     /**
      * Handles a click on the menu option to get a place.
-     *
      * @param item The menu item to handle.
      * @return Boolean.
      */
@@ -256,7 +296,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                             mLastKnownLocation = task.getResult();
 
                             LatLng newLoc = new LatLng(mLastKnownLocation.getLatitude(),
-                                    mLastKnownLocation.getLongitude());
+                            mLastKnownLocation.getLongitude());
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLoc, DEFAULT_ZOOM));
 
                             mMap.addMarker(new MarkerOptions().position(newLoc).title("New Location"));
@@ -268,7 +308,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
                             //mMap.moveCamera(CameraUpdateFactory
-                            //   .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                                 //   .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
 
@@ -276,7 +316,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                     }
                 });
             }
-        } catch (SecurityException e) {
+        } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }
     }
@@ -334,7 +374,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         if (mLocationPermissionGranted) {
             // Get the likely places - that is, the businesses and other points of interest that
             // are the best match for the device's current location.
-            @SuppressWarnings("MissingPermission") final Task<PlaceLikelihoodBufferResponse> placeResult =
+            @SuppressWarnings("MissingPermission") final
+            Task<PlaceLikelihoodBufferResponse> placeResult =
                     mPlaceDetectionClient.getCurrentPlace(null);
             placeResult.addOnCompleteListener
                     (new OnCompleteListener<PlaceLikelihoodBufferResponse>() {
@@ -423,7 +464,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
                 // Position the map's camera at the location of the marker.
                 //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
-                //    DEFAULT_ZOOM));
+                    //    DEFAULT_ZOOM));
             }
         };
 
@@ -451,7 +492,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 mLastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e) {
+        } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }
     }

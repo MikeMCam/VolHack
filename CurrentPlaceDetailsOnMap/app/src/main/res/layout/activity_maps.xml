@@ -31,18 +31,7 @@
         android:textSize="20sp"
         android:textColor="#ffffff"
         android:background="#9C3535"
-        android:layout_gravity="top|end"/>
-
-    <Chronometer
-        android:id="@+id/chronometer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:textColor="#ffffff"
-        android:layout_gravity="top|center"/>
-
-
-
+        android:layout_gravity="top|start"/>
 
 
 </FrameLayout>
